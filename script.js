@@ -63,14 +63,46 @@ function showPopup(title, message, isFirstPlayer = false) {
       firstPlayer.name = playerName;
       firstPlayer.Symbol = document.querySelector("#playerSymbol").value;
       secondPlayer.Symbol = firstPlayer.Symbol === "X" ? "O" : "X";
+      localStorage.setItem("firstPlayerName", firstPlayer.name);
+      localStorage.setItem("firstPlayerSymbol", firstPlayer.Symbol);
+      localStorage.setItem("secondPlayerSymbol", secondPlayer.Symbol);
       document.body.removeChild(popup);
       showPopup("Player 2 Setup", "Enter your name:", false);
     } else {
       secondPlayer.name = playerName;
+      localStorage.setItem("secondPlayerName", secondPlayer.name);
       document.body.removeChild(popup);
+      document.getElementById("startBtn").style.display = "none";
+      showPlayerInfo();
     }
   });
 }
+
+// show Players Infos;
+function showPlayerInfo() {
+  const firstPlayerName = localStorage.getItem("firstPlayerName");
+  const firstPlayerSymbol = localStorage.getItem("firstPlayerSymbol");
+  const secondPlayerName = localStorage.getItem("secondPlayerName");
+  const secondPlayerSymbol = localStorage.getItem("secondPlayerSymbol");
+  const popup1 = document.createElement("div");
+  popup1.className = "player-info left-popup";
+  popup1.innerHTML = `
+  <h2>Player 1</h2>
+  <p>Name: ${firstPlayer.name}</p>
+  <p>Symbol: ${firstPlayer.Symbol}</p>
+  `;
+  const popup2 = document.createElement("div");
+  popup2.className = "player-info right-popup";
+  popup2.innerHTML = `
+  <h2>Player 2</h2>
+  <p>Name: ${secondPlayer.name}</p>
+  <p>Symbol: ${secondPlayer.Symbol}</p>
+  `;
+
+  document.body.appendChild(popup1);
+  document.body.appendChild(popup2);
+}
+
 startBtn.addEventListener("click", () => {
   showPopup("Player Setup", "Enter your name and choose a symbol:", true);
 });
