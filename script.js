@@ -7,6 +7,8 @@ let secondPlayer = { name: "", Symbol: "" };
 
 let currentPlayer;
 let gamePlaying = false;
+const conditionWin = 5;
+
 const board = Array(400).fill("");
 
 // Create cell
@@ -23,8 +25,13 @@ function cellClick(index) {
   board[index] = currentPlayer.Symbol;
   const cell = container.querySelector(`[index='${index}']`);
   cell.textContent = currentPlayer.Symbol;
-  currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
-  updatePlayerInfo();
+  if (checkWin(index)) {
+    gamePlaying = false;
+    showWinPopup(currentPlayer.name);
+  } else {
+    currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
+    updatePlayerInfo();
+  }
 }
 function updatePlayerInfo() {
   const leftPopup = document.querySelector(".left-popup");
@@ -36,6 +43,48 @@ function updatePlayerInfo() {
     leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5 )";
     rightPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
   }
+}
+function checkWin(index) {
+  const row = Math.floor(index / 20);
+  const col = index % 20;
+
+  // Checking horizontally
+  let count = 0;
+  for (let i = Math.max(0, col - 4); i <= Math.min(19, col + 4); i++) {
+    if (board[row * 20 + i] === currentPlayer.Symbol) {
+      count++;
+      if (count === 5) return true;
+    } else {
+      count = 0;
+    }
+  }
+
+  // Checking vertically
+  count = 0;
+  for (let i = Math.max(0, row - 4); i <= Math.min(19, row + 4); i++) {
+    if (board[i * 20 + col] === currentPlayer.Symbol) {
+      count++;
+      if (count === 5) return true;
+    } else {
+      count = 0;
+    }
+  }
+  return false;
+}
+function showWinPopup(winnerName) {
+  const popup = document.createElement("div");
+  popup.className = "popup";
+  popup.innerHTML = `
+  <div class="popup-content">
+  <h2>Congratulations!</h2>
+  <p>${winnerName} wins the game!</p>
+  <button id="restartBtn">Restart Game with</button>
+  </div>
+  `;
+  document.body.appendChild(popup);
+  document.getElementById("restartBtn").addEventListener("click", function () {
+    location.reload();
+  });
 }
 
 function showPopup(title, message, isFirstPlayer = false) {
@@ -126,9 +175,4 @@ function showPlayerInfo() {
 
 startBtn.addEventListener("click", () => {
   showPopup("Player Setup", "Enter your name and choose a symbol:", true);
-});
-
-cell.addEventListener("click", () => {
-  console.log(`Cell ${index} clicked`);
-  cellClick(index);
 });
