@@ -4,6 +4,8 @@ const popupButton = document.getElementById("popupButton");
 
 let firstPlayer = { name: "", Symbol: "" };
 let secondPlayer = { name: "", Symbol: "" };
+
+let currentPlayer;
 let gamePlaying = false;
 const board = Array(200).fill("");
 
@@ -17,7 +19,23 @@ for (let index = 0; index < 400; index++) {
 }
 
 function cellClick(index) {
-  if (!gamePlaying || board[index] == "") return;
+  if (!gamePlaying || board[index] !== "") return;
+  board[index] = currentPlayer.Symbol;
+  const cell = container.querySelector(`[index='${index}']`);
+  cell.textContent = currentPlayer.Symbol;
+  currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
+  updatePlayerInfo();
+}
+function updatePlayerInfo() {
+  const leftPopup = document.querySelector(".left-popup");
+  const rightPopup = document.querySelector(".right-popup");
+  if (currentPlayer === firstPlayer) {
+    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
+    rightPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
+  } else {
+    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
+    rightPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
+  }
 }
 
 function showPopup(title, message, isFirstPlayer = false) {
@@ -73,6 +91,8 @@ function showPopup(title, message, isFirstPlayer = false) {
       localStorage.setItem("secondPlayerName", secondPlayer.name);
       document.body.removeChild(popup);
       document.getElementById("startBtn").style.display = "none";
+      currentPlayer = firstPlayer;
+      gamePlaying = true;
       showPlayerInfo();
     }
   });
@@ -101,6 +121,7 @@ function showPlayerInfo() {
 
   document.body.appendChild(popup1);
   document.body.appendChild(popup2);
+  updatePlayerInfo();
 }
 
 startBtn.addEventListener("click", () => {
