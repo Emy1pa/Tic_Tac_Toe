@@ -73,16 +73,79 @@ function checkWin(index) {
 }
 function showWinPopup(winnerName) {
   const popup = document.createElement("div");
-  popup.className = "popup";
-  popup.innerHTML = `
-  <div class="popup-content">
-  <h2>Congratulations!</h2>
-  <p>${winnerName} wins the game!</p>
-  <button id="restartBtn">Restart Game with</button>
-  </div>
+  popup.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
   `;
+
+  popup.innerHTML = `
+    <div style="
+      background-color: rgba(30, 41, 59, 0.9);
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      color: #e0f2fe;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), 0 0 40px rgba(56, 189, 248, 0.2);
+      max-width: 400px;
+      width: 90%;
+      border: 2px solid rgba(56, 189, 248, 0.5);
+      position: relative;
+      overflow: hidden;
+    ">
+      <h2 style="
+        margin-bottom: 20px;
+        font-size: 2.2rem;
+        color: #38bdf8;
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      ">Congratulations!</h2>
+      <p style="
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+        color: #cbd5e1;
+        line-height: 1.6;
+      ">${winnerName} wins the game!</p>
+      <button id="restartBtn" style="
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        background-color: #1e40af;
+        color: #e0f2fe;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      ">Restart Game</button>
+    </div>
+  `;
+
   document.body.appendChild(popup);
-  document.getElementById("restartBtn").addEventListener("click", function () {
+
+  const restartBtn = document.getElementById("restartBtn");
+
+  // restartBtn.addEventListener("mouseover", function () {
+  //   this.style.backgroundColor = "#2563eb";
+  //   this.style.transform = "scale(1.05)";
+  //   this.style.boxShadow = "0 0 15px rgba(56, 189, 248, 0.5)";
+  // });
+
+  // restartBtn.addEventListener("mouseout", function () {
+  //   this.style.backgroundColor = "#1e40af";
+  //   this.style.transform = "scale(1)";
+  //   this.style.boxShadow = "none";
+  // });
+
+  restartBtn.addEventListener("click", function () {
     location.reload();
   });
 }
