@@ -7,7 +7,7 @@ let secondPlayer = { name: "", Symbol: "" };
 
 let currentPlayer;
 let gamePlaying = false;
-const board = Array(200).fill("");
+const board = Array(400).fill("");
 
 // Create cell
 for (let index = 0; index < 400; index++) {
@@ -33,7 +33,7 @@ function updatePlayerInfo() {
     leftPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
     rightPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
   } else {
-    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
+    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5 )";
     rightPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
   }
 }
@@ -126,4 +126,9 @@ function showPlayerInfo() {
 
 startBtn.addEventListener("click", () => {
   showPopup("Player Setup", "Enter your name and choose a symbol:", true);
+});
+
+cell.addEventListener("click", () => {
+  console.log(`Cell ${index} clicked`);
+  cellClick(index);
 });
