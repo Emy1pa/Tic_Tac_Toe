@@ -282,4 +282,5 @@ function showPlayerInfo() {
 
 startBtn.addEventListener("click", () => {
   showPopup("Player Setup", "Enter your name and choose a symbol:", true);
+  hideScores();
 });
