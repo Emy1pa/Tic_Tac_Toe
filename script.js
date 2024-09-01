@@ -2,13 +2,31 @@ const container = document.getElementById("container");
 const startBtn = document.getElementById("startBtn");
 const popupButton = document.getElementById("popupButton");
 
-let firstPlayer = { name: "", Symbol: "" };
-let secondPlayer = { name: "", Symbol: "" };
+let firstPlayer = { name: "", symbol: "" };
+let secondPlayer = { name: "", symbol: "" };
 
-let firstPlayerScore = parseInt(localStorage.getItem("firstPlayerScore")) || 0;
-let secondPlayerScore =
-  parseInt(localStorage.getItem("secondPlayerScore")) || 0;
+function getScore(name) {
+  return parseInt(localStorage.getItem(name + "Score")) || 0;
+}
 
+function setScore(name, score) {
+  localStorage.setItem(name + "Score", score);
+}
+
+function updateScore(name) {
+  let score = getScore(name);
+  score++;
+  setScore(name, score);
+  return score;
+}
+
+function scoreInitialize() {
+  let firstPlayerScore = getScore(firstPlayer.name);
+  let secondPlayerScore = getScore(secondPlayer.name);
+  return { firstPlayerScore, secondPlayerScore };
+}
+
+let { firstPlayerScore, secondPlayerScore } = scoreInitialize();
 let currentPlayer;
 let gamePlaying = false;
 const conditionWin = 5;
@@ -26,17 +44,19 @@ for (let index = 0; index < 400; index++) {
 
 function cellClick(index) {
   if (!gamePlaying || board[index] !== "") return;
-  board[index] = currentPlayer.Symbol;
+  board[index] = currentPlayer.symbol;
   const cell = container.querySelector(`[index='${index}']`);
-  cell.textContent = currentPlayer.Symbol;
+  cell.textContent = currentPlayer.symbol;
   if (checkWin(index)) {
     gamePlaying = false;
-    showWinPopup(currentPlayer.name);
+    const newScore = updateScore(currentPlayer.name);
+    showWinPopup(currentPlayer.name, newScore);
   } else {
     currentPlayer = currentPlayer === firstPlayer ? secondPlayer : firstPlayer;
     updatePlayerInfo();
   }
 }
+
 function updatePlayerInfo() {
   const leftPopup = document.querySelector(".left-popup");
   const rightPopup = document.querySelector(".right-popup");
@@ -44,10 +64,11 @@ function updatePlayerInfo() {
     leftPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
     rightPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
   } else {
-    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5 )";
+    leftPopup.style.backgroundColor = "rgba(30, 41, 59, 0.5)";
     rightPopup.style.backgroundColor = "rgba(30, 41, 59, 1)";
   }
 }
+
 function checkWin(index) {
   const row = Math.floor(index / 20);
   const col = index % 20;
@@ -55,10 +76,9 @@ function checkWin(index) {
   // Checking horizontally
   let count = 0;
   for (let i = Math.max(0, col - 4); i <= Math.min(19, col + 4); i++) {
-    if (board[row * 20 + i] === currentPlayer.Symbol) {
+    if (board[row * 20 + i] === currentPlayer.symbol) {
       count++;
       if (count === 5) {
-        updateScore();
         return true;
       }
     } else {
@@ -69,10 +89,9 @@ function checkWin(index) {
   // Checking vertically
   count = 0;
   for (let i = Math.max(0, row - 4); i <= Math.min(19, row + 4); i++) {
-    if (board[i * 20 + col] === currentPlayer.Symbol) {
+    if (board[i * 20 + col] === currentPlayer.symbol) {
       count++;
       if (count === 5) {
-        updateScore();
         return true;
       }
     } else {
@@ -81,25 +100,17 @@ function checkWin(index) {
   }
   return false;
 }
-function updateScore() {
-  if (currentPlayer === firstPlayer) {
-    firstPlayerScore++;
-    localStorage.setItem("firstPlayerScore", firstPlayerScore);
-  } else {
-    secondPlayerScore++;
-    localStorage.setItem("secondPlayerScore", secondPlayerScore);
-  }
-  updateScoreDisplay();
-}
+
 function updateScoreDisplay() {
-  document.querySelector(
-    ".left-popup .score"
-  ).textContent = `Score: ${firstPlayerScore}`;
+  document.querySelector(".left-popup .score").textContent = `Score: ${getScore(
+    firstPlayer.name
+  )}`;
   document.querySelector(
     ".right-popup .score"
-  ).textContent = `Score: ${secondPlayerScore}`;
+  ).textContent = `Score: ${getScore(secondPlayer.name)}`;
 }
-function showWinPopup(winnerName) {
+
+function showWinPopup(winnerName, newScore) {
   const popup = document.createElement("div");
   popup.style.cssText = `
     position: fixed;
@@ -140,7 +151,7 @@ function showWinPopup(winnerName) {
         font-size: 1.2rem;
         color: #cbd5e1;
         line-height: 1.6;
-      ">${winnerName} wins the game!</p>
+      ">${winnerName} wins the game with a new score of ${newScore}!</p>
       <button id="restartBtn" style="
         padding: 12px 24px;
         font-size: 1.1rem;
@@ -177,15 +188,15 @@ function showPopup(title, message, isFirstPlayer = false) {
   ${
     isFirstPlayer
       ? `
-   <input type="text" id="playerName" placeholder = "Enter your name">
+   <input type="text" id="playerName" placeholder="Enter your name">
     <select id="playerSymbol">
       <option value="X">X</option>
       <option value="O">O</option>
     </select>
     `
       : `
-    <input type="text" id="playerName" placeholder = "Enter your name">
-    <p>Your symbol is : <strong>${secondPlayer.Symbol}</strong></p>
+    <input type="text" id="playerName" placeholder="Enter your name">
+    <p>Your symbol is : <strong>${secondPlayer.symbol}</strong></p>
     `
   }
     <button id="popupBtn">Save</button>
@@ -207,16 +218,25 @@ function showPopup(title, message, isFirstPlayer = false) {
     const playerName = document.querySelector("#playerName").value;
     if (isFirstPlayer) {
       firstPlayer.name = playerName;
-      firstPlayer.Symbol = document.querySelector("#playerSymbol").value;
-      secondPlayer.Symbol = firstPlayer.Symbol === "X" ? "O" : "X";
+      firstPlayer.symbol = document.querySelector("#playerSymbol").value;
+      secondPlayer.symbol = firstPlayer.symbol === "X" ? "O" : "X";
       localStorage.setItem("firstPlayerName", firstPlayer.name);
-      localStorage.setItem("firstPlayerSymbol", firstPlayer.Symbol);
-      localStorage.setItem("secondPlayerSymbol", secondPlayer.Symbol);
+      localStorage.setItem("firstPlayerSymbol", firstPlayer.symbol);
+      localStorage.setItem("secondPlayerSymbol", secondPlayer.symbol);
+      if (!localStorage.getItem(firstPlayer.name + "Score")) {
+        setScore(firstPlayer.name, 0);
+      }
+      if (!localStorage.getItem(secondPlayer.name + "Score")) {
+        setScore(secondPlayer.name, 0);
+      }
       document.body.removeChild(popup);
       showPopup("Player 2 Setup", "Enter your name:", false);
     } else {
       secondPlayer.name = playerName;
       localStorage.setItem("secondPlayerName", secondPlayer.name);
+      if (!localStorage.getItem(secondPlayer.name + "Score")) {
+        setScore(secondPlayer.name, 0);
+      }
       document.body.removeChild(popup);
       document.getElementById("startBtn").style.display = "none";
       currentPlayer = firstPlayer;
@@ -226,28 +246,32 @@ function showPopup(title, message, isFirstPlayer = false) {
   });
 }
 
-// show Players Infos;
+// Show Players Info
 function showPlayerInfo() {
-  const firstPlayerName = localStorage.getItem("firstPlayerName");
-  const firstPlayerSymbol = localStorage.getItem("firstPlayerSymbol");
-  const secondPlayerName = localStorage.getItem("secondPlayerName");
-  const secondPlayerSymbol = localStorage.getItem("secondPlayerSymbol");
+  firstPlayer.name = localStorage.getItem("firstPlayerName") || "";
+  firstPlayer.symbol = localStorage.getItem("firstPlayerSymbol") || "";
+  secondPlayer.name = localStorage.getItem("secondPlayerName") || "";
+  secondPlayer.symbol = localStorage.getItem("secondPlayerSymbol") || "";
+
+  const firstPlayerScore = getScore(firstPlayer.name);
+  const secondPlayerScore = getScore(secondPlayer.name);
+
   const popup1 = document.createElement("div");
   popup1.className = "player-info left-popup";
   popup1.innerHTML = `
   <h2>Player 1</h2>
   <p>Name: ${firstPlayer.name}</p>
-  <p>Symbol: ${firstPlayer.Symbol}</p>
+  <p>Symbol: ${firstPlayer.symbol}</p>
   <p class='score'>Score: ${firstPlayerScore}</p>
   `;
+
   const popup2 = document.createElement("div");
   popup2.className = "player-info right-popup";
   popup2.innerHTML = `
   <h2>Player 2</h2>
   <p>Name: ${secondPlayer.name}</p>
-  <p>Symbol: ${secondPlayer.Symbol}</p>
+  <p>Symbol: ${secondPlayer.symbol}</p>
   <p class='score'>Score: ${secondPlayerScore}</p>
-
   `;
 
   document.body.appendChild(popup1);
