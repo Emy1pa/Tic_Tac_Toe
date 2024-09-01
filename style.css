@@ -229,6 +229,12 @@ button#popupBtn:hover {
   font-size: 1rem;
 }
 
+.score {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #38bdf8;
+}
+
 @media (max-width: 600px) {
   #container {
     grid-template-columns: repeat(10, 25px);

@@ -5,6 +5,10 @@ const popupButton = document.getElementById("popupButton");
 let firstPlayer = { name: "", Symbol: "" };
 let secondPlayer = { name: "", Symbol: "" };
 
+let firstPlayerScore = parseInt(localStorage.getItem("firstPlayerScore")) || 0;
+let secondPlayerScore =
+  parseInt(localStorage.getItem("secondPlayerScore")) || 0;
+
 let currentPlayer;
 let gamePlaying = false;
 const conditionWin = 5;
@@ -53,7 +57,10 @@ function checkWin(index) {
   for (let i = Math.max(0, col - 4); i <= Math.min(19, col + 4); i++) {
     if (board[row * 20 + i] === currentPlayer.Symbol) {
       count++;
-      if (count === 5) return true;
+      if (count === 5) {
+        updateScore();
+        return true;
+      }
     } else {
       count = 0;
     }
@@ -64,12 +71,33 @@ function checkWin(index) {
   for (let i = Math.max(0, row - 4); i <= Math.min(19, row + 4); i++) {
     if (board[i * 20 + col] === currentPlayer.Symbol) {
       count++;
-      if (count === 5) return true;
+      if (count === 5) {
+        updateScore();
+        return true;
+      }
     } else {
       count = 0;
     }
   }
   return false;
+}
+function updateScore() {
+  if (currentPlayer === firstPlayer) {
+    firstPlayerScore++;
+    localStorage.setItem("firstPlayerScore", firstPlayerScore);
+  } else {
+    secondPlayerScore++;
+    localStorage.setItem("secondPlayerScore", secondPlayerScore);
+  }
+  updateScoreDisplay();
+}
+function updateScoreDisplay() {
+  document.querySelector(
+    ".left-popup .score"
+  ).textContent = `Score: ${firstPlayerScore}`;
+  document.querySelector(
+    ".right-popup .score"
+  ).textContent = `Score: ${secondPlayerScore}`;
 }
 function showWinPopup(winnerName) {
   const popup = document.createElement("div");
@@ -132,18 +160,6 @@ function showWinPopup(winnerName) {
   document.body.appendChild(popup);
 
   const restartBtn = document.getElementById("restartBtn");
-
-  // restartBtn.addEventListener("mouseover", function () {
-  //   this.style.backgroundColor = "#2563eb";
-  //   this.style.transform = "scale(1.05)";
-  //   this.style.boxShadow = "0 0 15px rgba(56, 189, 248, 0.5)";
-  // });
-
-  // restartBtn.addEventListener("mouseout", function () {
-  //   this.style.backgroundColor = "#1e40af";
-  //   this.style.transform = "scale(1)";
-  //   this.style.boxShadow = "none";
-  // });
 
   restartBtn.addEventListener("click", function () {
     location.reload();
@@ -222,6 +238,7 @@ function showPlayerInfo() {
   <h2>Player 1</h2>
   <p>Name: ${firstPlayer.name}</p>
   <p>Symbol: ${firstPlayer.Symbol}</p>
+  <p class='score'>Score: ${firstPlayerScore}</p>
   `;
   const popup2 = document.createElement("div");
   popup2.className = "player-info right-popup";
@@ -229,11 +246,14 @@ function showPlayerInfo() {
   <h2>Player 2</h2>
   <p>Name: ${secondPlayer.name}</p>
   <p>Symbol: ${secondPlayer.Symbol}</p>
+  <p class='score'>Score: ${secondPlayerScore}</p>
+
   `;
 
   document.body.appendChild(popup1);
   document.body.appendChild(popup2);
   updatePlayerInfo();
+  updateScoreDisplay();
 }
 
 startBtn.addEventListener("click", () => {
