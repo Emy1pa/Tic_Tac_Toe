@@ -4,6 +4,7 @@ const popupButton = document.getElementById("popupButton");
 
 let firstPlayer = { name: "", symbol: "" };
 let secondPlayer = { name: "", symbol: "" };
+const nameRegex = /^[a-zA-Z0-9]+$/;
 
 function getScore(name) {
   return parseInt(localStorage.getItem(name + "Score")) || 0;
@@ -246,7 +247,22 @@ function showPopup(title, message, isFirstPlayer = false) {
   });
 
   document.getElementById("popupBtn").addEventListener("click", () => {
-    const playerName = document.querySelector("#playerName").value;
+    const playerName = document.querySelector("#playerName").value.trim();
+    if (!playerName || !nameRegex.test(playerName)) {
+      alert(
+        "Please enter a valid name. Only alphanumeric characters are allowed."
+      );
+      return;
+    }
+    if (
+      (isFirstPlayer && playerName === secondPlayer.name) ||
+      (!isFirstPlayer && playerName === firstPlayer.name)
+    ) {
+      alert(
+        "This name is already taken by the other player. Please choose a different name."
+      );
+      return;
+    }
     if (isFirstPlayer) {
       firstPlayer.name = playerName;
       firstPlayer.symbol = document.querySelector("#playerSymbol").value;
