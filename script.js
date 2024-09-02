@@ -78,9 +78,7 @@ function checkWin(index) {
   for (let i = Math.max(0, col - 4); i <= Math.min(19, col + 4); i++) {
     if (board[row * 20 + i] === currentPlayer.symbol) {
       count++;
-      if (count === 5) {
-        return true;
-      }
+      if (count === 5) return true;
     } else {
       count = 0;
     }
@@ -91,13 +89,46 @@ function checkWin(index) {
   for (let i = Math.max(0, row - 4); i <= Math.min(19, row + 4); i++) {
     if (board[i * 20 + col] === currentPlayer.symbol) {
       count++;
-      if (count === 5) {
-        return true;
-      }
+      if (count === 5) return true;
     } else {
       count = 0;
     }
   }
+
+  // Checking diagonal (top-left to bottom-right)
+  count = 0;
+  for (let i = -4; i <= 4; i++) {
+    if (
+      row + i >= 0 &&
+      row + i < 20 &&
+      col + i >= 0 &&
+      col + i < 20 &&
+      board[(row + i) * 20 + (col + i)] === currentPlayer.symbol
+    ) {
+      count++;
+      if (count === 5) return true;
+    } else {
+      count = 0;
+    }
+  }
+
+  // Checking diagonal (top-right to bottom-left)
+  count = 0;
+  for (let i = -4; i <= 4; i++) {
+    if (
+      row + i >= 0 &&
+      row + i < 20 &&
+      col - i >= 0 &&
+      col - i < 20 &&
+      board[(row + i) * 20 + (col - i)] === currentPlayer.symbol
+    ) {
+      count++;
+      if (count === 5) return true;
+    } else {
+      count = 0;
+    }
+  }
+
   return false;
 }
 
@@ -281,6 +312,7 @@ function showPlayerInfo() {
 }
 
 startBtn.addEventListener("click", () => {
+  showScoresBtn.style.display = "none";
   showPopup("Player Setup", "Enter your name and choose a symbol:", true);
   hideScores();
 });

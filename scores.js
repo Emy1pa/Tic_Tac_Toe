@@ -18,8 +18,8 @@ function getAllPlayersScores() {
 function showScores() {
   const players = getAllPlayersScores();
 
-  // Filtrer les joueurs ayant un score supérieur à 0
   const filteredPlayers = players.filter((player) => player.score > 0);
+  filteredPlayers.sort((a, b) => b.score - a.score);
 
   const scoresList = document.getElementById("scoresList");
 
