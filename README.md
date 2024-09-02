@@ -4,64 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>README - Tic-Tac-Toe Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f8fafc;
-            color: #334155;
-            margin: 20px;
-        }
-
-        h1, h2 {
-            color: #1e3a8a;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-        }
-
-        h2 {
-            font-size: 2rem;
-        }
-
-        p, li {
-            font-size: 1rem;
-            margin: 10px 0;
-        }
-
-        code {
-            background-color: #e2e8f0;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #e11d48;
-        }
-
-        .code-block {
-            background-color: #f1f5f9;
-            padding: 10px;
-            border-left: 5px solid #3b82f6;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        ul {
-            margin: 20px 0;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        a {
-            color: #1d4ed8;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    
 </head>
 <body>
 
